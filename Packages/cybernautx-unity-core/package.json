@@ -1,0 +1,12 @@
+{
+  "name": "com.cybernautx.unitycore",
+  "version": "1.0.0",
+  "displayName": "CybernautX Unity Core",
+  "description": "Essential Unity Scripts",
+  "unity": "2019.1",
+  "dependencies": {},
+  "author": {
+    "name": "Lukas Kraehn",
+    "email": "hello@cybernautx.de"
+  }
+}
