@@ -5,9 +5,18 @@ using UnityEngine.UI;
 using Sirenix.OdinInspector;
 using DG.Tweening;
 using System;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
+    [BoxGroup("Point Counter")]
+    [SerializeField]
+    private TextMeshProUGUI pointCounter;
+
+    [BoxGroup("Point Counter")]
+    [SerializeField]
+    private AnimationSettings pointCounterAnimationSettings;
+
     [BoxGroup("Flashlight")]
     [SerializeField]
     private FlashlightController flashlight;
@@ -32,6 +41,8 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
+        GameManager.OnPlayerPointsUpdatedEvent += UpdatePointsCounter;
+
         if (flashlight != null && flashlightSlider != null)
         {
             flashlight.OnEnergyUpdated += UpdateFlashlightSlider;
@@ -52,6 +63,8 @@ public class UIManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        GameManager.OnPlayerPointsUpdatedEvent -= UpdatePointsCounter;
+
         if (flashlight != null)
             flashlight.OnEnergyUpdated -= UpdateFlashlightSlider;
     }
@@ -64,5 +77,12 @@ public class UIManager : MonoBehaviour
 
         if (flashLightSliderFillImage != null)
             flashLightSliderFillImage.DOColor(Color.Lerp(emptyColor, fullColor, flashlight.currentEnergy / flashlight.maxEnergy), sliderAnimationSettings.duration).SetEase(sliderAnimationSettings.ease);
+    }
+
+    private void UpdatePointsCounter(int amount)
+    {
+        if (pointCounter == null) return;
+
+        pointCounter.DOCounter(int.Parse(pointCounter.text), amount, pointCounterAnimationSettings.duration).SetEase(pointCounterAnimationSettings.ease);
     }
 }
