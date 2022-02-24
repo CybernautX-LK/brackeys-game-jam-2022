@@ -6,6 +6,8 @@ using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.Events;
 public class FlashlightController : MonoBehaviour
 {
+
+
     [BoxGroup("Settings")]
     public float maxEnergy = 100.0f;
 
@@ -15,10 +17,19 @@ public class FlashlightController : MonoBehaviour
     [BoxGroup("Settings")]
     public float energyReloadPerSecond = 20.0f;
 
+    [BoxGroup("Settings")]
+    [Range(1.0f, 10.0f)]
+    [SerializeField]
+    private float turnSpeed = 8.0f;
+
+    [BoxGroup("References")]
+    [SerializeField]
+    private Camera cam;
+
     [BoxGroup("References")]
     [SerializeField]
     private Light2D fleshlight;
-    
+
     [BoxGroup("References")]
     [SerializeField]
     private PolygonCollider2D polygonCollider2d;
@@ -33,9 +44,14 @@ public class FlashlightController : MonoBehaviour
     [ShowInInspector]
     public bool isActivated { get => fleshlight != null && fleshlight.enabled; }
 
-    
+    private SpriteMask spriteMask;
 
     public UnityAction<float> OnEnergyUpdated;
+
+    private void Awake()
+    {
+        spriteMask = GetComponentInChildren<SpriteMask>();
+    }
 
     private void Start()
     {
@@ -50,14 +66,22 @@ public class FlashlightController : MonoBehaviour
             return;
         }
 
-        fleshlight.enabled = !isActivated;
-        polygonCollider2d.enabled = fleshlight.enabled;
+        if (fleshlight != null)
+            fleshlight.enabled = !isActivated;
+
+        if (polygonCollider2d != null)
+            polygonCollider2d.enabled = fleshlight.enabled;
+
+        if (spriteMask != null)
+            spriteMask.enabled = fleshlight.enabled;
     }
 
     private void Update()
     {
         float energyRate = (isActivated) ? -energyUsagePerSeconds : energyReloadPerSecond;
         UpdateEnergy(currentEnergy + energyRate * Time.deltaTime);
+
+        RotateTowardsMousePosition();
     }
 
     private void UpdateEnergy(float amount)
@@ -70,6 +94,16 @@ public class FlashlightController : MonoBehaviour
             ToggleLight();
 
         OnEnergyUpdated?.Invoke(currentEnergy);
+    }
+
+    private void RotateTowardsMousePosition()
+    {
+        if (cam == null) return;
+
+        Vector3 mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
+        Quaternion targetRotation = Quaternion.LookRotation(Vector3.forward, mousePosition - transform.position);
+
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

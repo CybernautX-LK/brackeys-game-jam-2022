@@ -11,16 +11,19 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float movementSpeed = 1.0f;
 
-    [BoxGroup("Settings")]
-    [Range(1.0f, 10.0f)]
-    [SerializeField]
-    private float turnSpeed = 8.0f;
-
     [BoxGroup("References")]
     [SerializeField]
     private Camera cam;
 
+    [BoxGroup("References")]
+    [SerializeField]
+    private new SpriteRenderer renderer;
+
     private new Rigidbody2D rigidbody;
+
+    private bool facingRight = true;
+
+    public bool playerInput { get; private set; }
 
     private void Awake()
     {
@@ -29,8 +32,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Move();
-        RotateTowardsMousePosition();
+        playerInput = Mathf.Abs(Input.GetAxis("Vertical")) > 0 || Mathf.Abs(Input.GetAxis("Horizontal")) > 0;
+
+        if (playerInput)
+            Move();
+        else
+            StopMove();
+
+        FlipTowardsMousePosition();
     }
 
     private void Move()
@@ -42,13 +51,37 @@ public class PlayerMovement : MonoBehaviour
 
         rigidbody.velocity = movementVector * movementSpeed;
     }
-    private void RotateTowardsMousePosition()
+
+    private void StopMove()
     {
-        if (cam == null) return;
-
-        Vector3 mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
-        Quaternion targetRotation = Quaternion.LookRotation(Vector3.forward, mousePosition - transform.position);
-
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+        rigidbody.velocity = Vector2.zero;
     }
+
+    private void FlipTowardsMousePosition()
+    {
+        Vector2 mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
+
+        if (mousePosition.x > transform.position.x && !facingRight)
+        {
+            Flip();
+        }
+        else if (mousePosition.x < transform.position.x && facingRight)
+        {
+            Flip();
+        }
+    }
+
+    private void Flip()
+    {
+        if (renderer == null) return;
+
+        // Switch the way the player is labelled as facing.
+        facingRight = !facingRight;
+
+        // Multiply the player's x local scale by -1.
+        Vector3 theScale = renderer.transform.localScale;
+        theScale.x *= -1;
+        renderer.transform.localScale = theScale;
+    }
+
 }

@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -12,9 +13,9 @@ TagManager:
   - Water
   - UI
   - Enemies
-  - 
-  - 
-  - 
+  - Shapes
+  - Mask
+  - Walls
   - 
   - 
   - 
@@ -41,9 +42,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Unlit
-    uniqueID: 995222343
-    locked: 0
   - name: Background
     uniqueID: 53672529
     locked: 0
@@ -52,4 +50,7 @@ TagManager:
     locked: 0
   - name: Foreground
     uniqueID: 1203686329
+    locked: 0
+  - name: Unlit
+    uniqueID: 995222343
     locked: 0

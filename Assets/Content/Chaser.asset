@@ -12,6 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4486f97d49d43a348a2936d400558213, type: 3}
   m_Name: Chaser
   m_EditorClassIdentifier: 
-  moveSpeed: 0.25
+  minLifeTime: 5
+  maxLifeTime: 15
+  moveSpeed: 0.5
   targetTag: Player
   target: {fileID: 0}
+  onlyMoveOnTargetMovement: 1
+  awakeAnimationSettings:
+    duration: 1
+    ease: 27
+  dieAnimationSettings:
+    duration: 1
+    ease: 26

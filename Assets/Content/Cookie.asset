@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f9be873a16a0494ebeb5c5c2ff535b1, type: 3}
   m_Name: Cookie
   m_EditorClassIdentifier: 
-  points: 10
+  points: 1

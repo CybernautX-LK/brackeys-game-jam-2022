@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4699105280977659352}
   m_Layer: 0
   m_Name: PLAYER
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -96,6 +96,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 3
+  cam: {fileID: 0}
+  renderer: {fileID: 0}
 --- !u!114 &4699105280977659352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,7 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dc5e1058ae38b24fb5f3c27e47af421, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  switchFleshlight: 32
+  toggleFlashlight: 32
 --- !u!1 &4699105282156700241
 GameObject:
   m_ObjectHideFlags: 0
@@ -194,9 +196,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91e28cd6ec4a0ff439ebde0c4b61dbc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxEnergy: 100
+  energyUsagePerSeconds: 10
+  energyReloadPerSecond: 20
+  turnSpeed: 8
   cam: {fileID: 0}
-  rigidbody: {fileID: 4699105280977659356}
-  damping: 10
+  fleshlight: {fileID: 0}
+  polygonCollider2d: {fileID: 0}
+  currentEnergy: 0
 --- !u!1 &4699105282342160720
 GameObject:
   m_ObjectHideFlags: 0
