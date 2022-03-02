@@ -4,9 +4,13 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.Events;
+using System.Reflection;
+
 public class FlashlightController : MonoBehaviour
 {
-
+    [BoxGroup("Settings")]
+    [Range(0, 1)]
+    public float flickerTreshold = 0.2f;
 
     [BoxGroup("Settings")]
     public float maxEnergy = 100.0f;
@@ -22,13 +26,13 @@ public class FlashlightController : MonoBehaviour
     [SerializeField]
     private float turnSpeed = 8.0f;
 
+    [BoxGroup("Audio")]
+    [SerializeField]
+    private AudioObject[] OnFlashlightToggledSFX;
+  
     [BoxGroup("References")]
     [SerializeField]
-    private Camera cam;
-
-    [BoxGroup("References")]
-    [SerializeField]
-    private Light2D fleshlight;
+    private Light2D flashlight;
 
     [BoxGroup("References")]
     [SerializeField]
@@ -42,15 +46,22 @@ public class FlashlightController : MonoBehaviour
     private bool outOfEnergy { get => currentEnergy <= 0.0f; }
 
     [ShowInInspector]
-    public bool isActivated { get => fleshlight != null && fleshlight.enabled; }
+    public bool isActivated { get => flashlight != null && flashlight.gameObject.activeSelf; }
 
+    private Camera cam;
     private SpriteMask spriteMask;
+    private float flashlightIntensity;
 
     public UnityAction<float> OnEnergyUpdated;
 
     private void Awake()
     {
         spriteMask = GetComponentInChildren<SpriteMask>();
+
+        if (flashlight != null)
+            flashlightIntensity = flashlight.intensity;
+
+        cam = Camera.main;
     }
 
     private void Start()
@@ -66,20 +77,33 @@ public class FlashlightController : MonoBehaviour
             return;
         }
 
-        if (fleshlight != null)
-            fleshlight.enabled = !isActivated;
-
+        if (flashlight != null)
+        {
+            flashlight.intensity = flashlightIntensity;
+            flashlight.gameObject.SetActive(!isActivated);
+        }
+            
         if (polygonCollider2d != null)
-            polygonCollider2d.enabled = fleshlight.enabled;
+            polygonCollider2d.enabled = isActivated;
 
-        if (spriteMask != null)
-            spriteMask.enabled = fleshlight.enabled;
+        if (OnFlashlightToggledSFX.Length > 0)
+        {
+            AudioObject audioObject = OnFlashlightToggledSFX[Random.Range(0, OnFlashlightToggledSFX.Length)];
+            AudioManager2.Instance.PlayOneShot(audioObject);
+        }
     }
 
     private void Update()
     {
         float energyRate = (isActivated) ? -energyUsagePerSeconds : energyReloadPerSecond;
+
         UpdateEnergy(currentEnergy + energyRate * Time.deltaTime);
+
+        if (outOfEnergy)
+            ToggleLight();
+
+        if (!outOfEnergy && currentEnergy < maxEnergy * flickerTreshold)
+            Flicker();
 
         RotateTowardsMousePosition();
     }
@@ -89,9 +113,6 @@ public class FlashlightController : MonoBehaviour
         float clampedAmount = Mathf.Clamp(amount, 0.0f, maxEnergy);
 
         currentEnergy = clampedAmount;
-
-        if (outOfEnergy)
-            ToggleLight();
 
         OnEnergyUpdated?.Invoke(currentEnergy);
     }
@@ -106,12 +127,19 @@ public class FlashlightController : MonoBehaviour
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
     }
 
+    private void Flicker()
+    {
+        int randomValue = Random.Range(0, 2);
+
+        flashlight.intensity = (randomValue == 0) ? 0.0f : flashlightIntensity;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out IDetectable detectable))
         {
             detectable.GetDetected(true);
-            Debug.Log("Detected " + collision.transform.name);
+            //Debug.Log("Detected " + collision.transform.name);
         };
     }
 

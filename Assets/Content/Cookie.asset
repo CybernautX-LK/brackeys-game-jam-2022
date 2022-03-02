@@ -13,3 +13,11 @@ MonoBehaviour:
   m_Name: Cookie
   m_EditorClassIdentifier: 
   points: 1
+  destroyAfterSeconds: 3
+  OnPickedUpSFX:
+  - {fileID: 11400000, guid: 37a3891609d96c74eaf23afac1b159e7, type: 2}
+  OnCollectedSFX:
+  - {fileID: 11400000, guid: 7aa90a744d7a93747ac6711798ac1591, type: 2}
+  - {fileID: 11400000, guid: 9a72bc14b22d8d949ae743664619c644, type: 2}
+  - {fileID: 11400000, guid: fd685aee6e802be4094b3cf68006c26e, type: 2}
+  - {fileID: 11400000, guid: 40ebe7a448c62ab4d830dd52e11195e1, type: 2}

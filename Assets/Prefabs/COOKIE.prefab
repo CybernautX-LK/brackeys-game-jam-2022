@@ -12,6 +12,9 @@ GameObject:
   - component: {fileID: 215377162498361311}
   - component: {fileID: 215377162498361310}
   - component: {fileID: 215377162498361297}
+  - component: {fileID: 8297496373580642624}
+  - component: {fileID: 5828096327007389013}
+  - component: {fileID: 1618042949}
   m_Layer: 0
   m_Name: COOKIE
   m_TagString: Untagged
@@ -52,7 +55,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 714a9cff8be50814cb4ba9536fcf448a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -70,10 +73,10 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -761819213
-  m_SortingLayer: 2
+  m_SortingLayerID: -583599891
+  m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6f1509c97b2c8bd48bd052f8a1aab5de, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -97,6 +100,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectable: {fileID: 11400000, guid: 6401708e1eb811b4b8e665801614bcbd, type: 2}
+  idleAnimationSettings:
+    duration: 1
+    ease: 6
+  onCollectedAnimationSettings:
+    duration: 1
+    ease: 28
 --- !u!58 &215377162498361297
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -113,3 +122,72 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!95 &8297496373580642624
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 215377162498361296}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4ead3c2969e1ddb409b8332c77181815, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &5828096327007389013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 215377162498361296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shaderTypes: 0
+  normalStrength: 5
+  normalSmoothing: 1
+  computingNormal: 0
+--- !u!114 &1618042949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 215377162498361296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75506d8beb303de47845c1d84914d244, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetType: 1
+  animations:
+  - playOnEnable: 0
+    name: Glow
+    delay: 0
+    loops: 2
+    loopType: 1
+    properties:
+    - sequenceConnection: 0
+      type: 0
+      materialProperty: _Glow
+      targetValue: 2.5
+      targetColor: {r: 1, g: 1, b: 1, a: 1}
+      duration: 1
+      ease: 3
+    - sequenceConnection: 0
+      type: 0
+      materialProperty: _InnerOutlineAlpha
+      targetValue: 0.15
+      targetColor: {r: 1, g: 1, b: 1, a: 1}
+      duration: 1
+      ease: 3

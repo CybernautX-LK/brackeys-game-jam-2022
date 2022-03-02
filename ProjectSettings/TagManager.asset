@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Missile
   layers:
   - Default
   - TransparentFX
@@ -42,15 +43,24 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Background
+  - name: Ground
     uniqueID: 53672529
     locked: 0
-  - name: Middleground
+  - name: Walls
+    uniqueID: 995222343
+    locked: 0
+  - name: Props
     uniqueID: 3533148083
+    locked: 0
+  - name: Character
+    uniqueID: 2082348253
+    locked: 0
+  - name: Collectable
+    uniqueID: 3711367405
+    locked: 0
+  - name: Monster
+    uniqueID: 3472220537
     locked: 0
   - name: Foreground
     uniqueID: 1203686329
-    locked: 0
-  - name: Unlit
-    uniqueID: 995222343
     locked: 0

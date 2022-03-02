@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Milk_AnimatorController
+  m_Controller: {fileID: 9100000, guid: 4ead3c2969e1ddb409b8332c77181815, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: c4951a6e2cfbdcb4ab9d02765dc23104, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 2e3785ce644aeff4c9aff0dd058a153f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: e076c8e8215271e4a93c3305c86914e4, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 83bccc33f078f1e4f8f7a16ccfa65bc4, type: 2}

@@ -10,6 +10,24 @@ using CybernautX;
 
 public class UIManager : MonoBehaviour
 {
+    public static UIManager instance;
+
+    [BoxGroup("Splash")]
+    [SerializeField]
+    private bool showSplash = true;
+
+    [BoxGroup("Splash")]
+    [SerializeField]
+    private GameObject splash;
+
+    [BoxGroup("Sequences")]
+    [SerializeField]
+    private SequenceController introSequence;
+
+    [BoxGroup("Sequences")]
+    [SerializeField]
+    private SequenceController outroSequence;
+
     [BoxGroup("Menus")]
     [SerializeField]
     private MainMenuController mainMenuController;
@@ -24,11 +42,7 @@ public class UIManager : MonoBehaviour
 
     [BoxGroup("Point Counter")]
     [SerializeField]
-    private TextMeshProUGUI pointCounter;
-
-    [BoxGroup("Point Counter")]
-    [SerializeField]
-    private AnimationSettings pointCounterAnimationSettings;
+    private PointsDisplay pointsDisplay;
 
     [BoxGroup("Point Counter")]
     [SerializeField]
@@ -58,17 +72,13 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
-        GameManager.OnPlayerPointsUpdatedEvent += UpdatePointsCounter;
+        instance = this;
+
+        GameManager.OnGameInitializedEvent += OnGameInitialized;
+        GameManager.OnPlayerPointsUpdatedEvent += OnPlayerPointsUpdated;
         GameManager.OnGameStartEvent += OnGameStart;
-        GameManager.OnGameOverEvent += OnGameOver;
-
-        if (flashlight != null && flashlightSlider != null)
-        {
-            flashlight.OnEnergyUpdated += UpdateFlashlightSlider;
-
-            if (flashlightSlider.fillRect != null)
-                flashLightSliderFillImage = flashlightSlider.fillRect.GetComponent<Image>();
-        }
+        GameManager.OnStartGameRequestEvent += OnStartGameRequest;
+        GameManager.OnGameOverCompleteEvent += OnGameOver;
 
         if (messageDisplay != null)
             messageDisplay.text = "";
@@ -79,15 +89,49 @@ public class UIManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        GameManager.OnPlayerPointsUpdatedEvent -= UpdatePointsCounter;
-        GameManager.OnGameStartEvent += OnGameStart;
-        GameManager.OnGameOverEvent -= OnGameOver;
+        GameManager.OnGameInitializedEvent -= OnGameInitialized;
+        GameManager.OnPlayerPointsUpdatedEvent -= OnPlayerPointsUpdated;
+        GameManager.OnGameStartEvent -= OnGameStart;
+        GameManager.OnStartGameRequestEvent -= OnStartGameRequest;
+        GameManager.OnGameOverCompleteEvent -= OnGameOver;
 
         if (flashlight != null)
             flashlight.OnEnergyUpdated -= UpdateFlashlightSlider;
     }
 
+    public void ShowMainMenu()
+    {
+        if (mainMenuController != null)
+            mainMenuController.OpenMenuSingle("MainMenu");
+    }
 
+    private void OnStartGameRequest(GameManager gameManager)
+    {
+        if (introSequence != null)
+            introSequence.StartSequence();
+    }
+
+    private void OnGameInitialized(GameManager gameManager)
+    {
+        flashlight = FindObjectOfType<FlashlightController>();
+
+        if (flashlight != null && flashlightSlider != null)
+        {
+            flashlight.OnEnergyUpdated += UpdateFlashlightSlider;
+
+
+            flashlightSlider.maxValue = flashlight.maxEnergy;
+            flashlightSlider.minValue = 0.0f;
+
+            if (flashlightSlider.fillRect != null)
+                flashLightSliderFillImage = flashlightSlider.fillRect.GetComponent<Image>();
+        }
+
+        if (pointsDisplay != null)
+        {
+            pointsDisplay.SetPoints(gameManager.currentPoints, false);
+        }
+    }
 
     private void Start()
     {
@@ -95,13 +139,17 @@ public class UIManager : MonoBehaviour
         {
             flashlightSlider.maxValue = flashlight.maxEnergy;
         }
+
+        if (splash != null)
+            splash.SetActive(showSplash && PlayerPrefs.GetInt("INTRO_HAS_BEEN_SEEN") == 0);
     }
 
     private void UpdateFlashlightSlider(float value)
     {
         if (flashlightSlider == null) return;
 
-        flashlightSlider.value = Mathf.Lerp(flashlightSlider.value, value, Time.deltaTime * 1 / sliderAnimationSettings.duration);
+        float sliderValuePercent = Time.deltaTime * 1 / sliderAnimationSettings.duration;
+        flashlightSlider.value = Mathf.Lerp(flashlightSlider.value, value, sliderValuePercent);
         //flashlightSlider.DOValue(value, sliderAnimationSettings.duration).SetEase(sliderAnimationSettings.ease);
 
         if (flashLightSliderFillImage != null)
@@ -109,14 +157,21 @@ public class UIManager : MonoBehaviour
             flashLightSliderFillImage.color = Color.Lerp(emptyColor, fullColor, flashlight.currentEnergy / flashlight.maxEnergy);
             //flashLightSliderFillImage.DOColor(Color.Lerp(emptyColor, fullColor, flashlight.currentEnergy / flashlight.maxEnergy), sliderAnimationSettings.duration).SetEase(sliderAnimationSettings.ease);
         }
-         
+
     }
 
-    private void UpdatePointsCounter(int amount)
+    // Await collectable animation
+    private void OnPlayerPointsUpdated(int amount)
     {
-        if (pointCounter == null) return;
+        CancelInvoke();
+        Invoke("UpdatePointsCounter", 1.0f);
+    }
 
-        pointCounter.DOCounter(int.Parse(pointCounter.text), amount, pointCounterAnimationSettings.duration).SetEase(pointCounterAnimationSettings.ease);
+    private void UpdatePointsCounter()
+    {
+        if (pointsDisplay == null) return;
+
+        pointsDisplay.SetPoints(GameManager.instance.currentPoints);
     }
 
     public void ShowMessage(string message, float seconds = 2.0f)
@@ -136,14 +191,22 @@ public class UIManager : MonoBehaviour
     {
         if (mainMenuController != null)
             mainMenuController.CloseAllMenus();
+
+        if (PlayerPrefs.GetInt("INTRO_HAS_BEEN_SEEN") != 1)
+            ShowMessage("Click to toggle flashlight", 4.0f);
     }
 
     private void OnGameOver(GameManager gameManager)
     {
-        if (mainMenuController != null)
-            mainMenuController.OpenMenuSingle("GameOverMenu");
+        //if (mainMenuController != null)
+        //    mainMenuController.OpenMenuSingle("GameOverMenu");
+        //
+        //if (endScoreDisplay != null)
+        //    endScoreDisplay.text = $"You collected {gameManager.currentPoints} cookies";
 
-        if (endScoreDisplay != null)
-            endScoreDisplay.text = $"You collected {gameManager.currentPoints} cookies";
+        ShowMessage("");
+
+        if (outroSequence != null)
+            outroSequence.StartSequence();
     }
 }

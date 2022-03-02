@@ -10,6 +10,11 @@ public class PlayerHealth : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.transform.CompareTag("Enemy"))
+        {
+
             OnPlayerDeathEvent?.Invoke();
+
+        }
+
     }
 }
